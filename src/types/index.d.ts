@@ -6,17 +6,21 @@ import { User, AuthSession } from './generated/models'
 import AuthModel from 'app/auth/model'
 import BaseModel from 'app/base/model'
 import FileModel from 'app/file/model'
-import { MailService } from '@sendgrid/mail'
-import S3Client from 'aws-sdk/clients/s3'
 import { JSONSchema7 } from 'json-schema'
-import { BlobService } from 'azure-storage'
 import { UserRole } from 'utils/decorators/RouteAccessRoles'
 import { SwaggerParams } from 'utils/decorators/Routes'
+import { RedisClient } from 'redis'
 export * from './generated/models'
 export * from './generated/validators'
 
 export type VersioningOptions = {
   prefix?: string
+}
+
+export interface PromiseRedisClient extends RedisClient {
+  getAsync(...args: any[]): Promise<any>
+  setAsync(...args: any[]): Promise<any>
+  delAsync(...args: any[]): Promise<any>
 }
 
 export type MaybeArray<T> = T | T[]
@@ -76,21 +80,17 @@ export interface Response extends RestifyResponse {
 export interface ServiceLocator {
   services: {
     DB: QueryWrapper
+    redis: PromiseRedisClient
     knex: Knex
     logger: Logger
-    sendgrid: typeof MailService
     Model?: ModelService
-    s3: S3Client
-    azure: BlobService
   }
   registerService(name: string, service: object): void
   get(name: 'DB'): QueryWrapper
-  get(name: 'azure'): BlobService
+  get(name: 'redis'): PromiseRedisClient
   get(name: 'knex'): Knex
-  get(name: 'sendgrid'): typeof MailService
   get(name: 'logger'): Logger
   get(name: 'Model'): ModelService
-  get(name: 's3'): S3Client
 }
 
 export interface ModelService {

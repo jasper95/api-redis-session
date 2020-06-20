@@ -25,6 +25,7 @@ function matchRoutes(routes: RouteConfig, req: Request) {
 
 export default async function authMiddleware(req: Request, res: Response, next: Next) {
   const DB = serviceLocator.get('DB')
+  const redis = serviceLocator.get('redis')
   const logger = serviceLocator.get('logger')
   req.authenticated = true
   const { authorization, referer } = req.headers
@@ -39,20 +40,14 @@ export default async function authMiddleware(req: Request, res: Response, next: 
   let invalid_token = false
   if (token) {
     try {
-      const { id, user_id } = jwt.verify(token, process.env.AUTH_SECRET) as AuthSession
-      const [session, user] = await Promise.all([DB.find('auth_session', id), DB.find('user', user_id)])
-      if (!session || session.status !== 'Active') {
+      const { id } = jwt.verify(token, process.env.AUTH_SECRET) as AuthSession
+      const session = await redis.getAsync(id).then(JSON.parse)
+      if (!session) {
         error = 'Invalid token'
         invalid_token = true
       } else if (session) {
-        req.user = user
+        req.user = session.user
         req.session = session
-      }
-      if (user) {
-        req.user = user
-      } else {
-        error = 'Invalid token'
-        invalid_token = true
       }
     } catch (err) {
       error = 'Invalid access token'

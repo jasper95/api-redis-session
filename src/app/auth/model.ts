@@ -6,10 +6,13 @@ import { AuthSession, Token, Identifiable, User } from 'types'
 class AuthModel extends AppService {
   async authenticateUser(user: User) {
     const session = await this.DB.insert<AuthSession>('auth_session', { user_id: user.id, device_type: 'Web' })
-    return this.generateToken({
-      payload: session,
-      insert_db: false,
-    })
+    return {
+      session,
+      token: await this.generateToken({
+        payload: session,
+        insert_db: false,
+      }),
+    }
   }
 
   async generateToken<T extends Identifiable>(params: {

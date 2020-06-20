@@ -12,6 +12,7 @@ import { LoginSchema, ForgotPasswordSchema } from 'types'
 import { isAfter } from 'date-fns'
 import bcrypt from 'bcrypt'
 import dayjs from 'dayjs'
+import serviceLocator from 'utils/serviceLocator'
 
 @Controller('/auth', 'Authentication')
 export default class UserController extends AppService {
@@ -73,8 +74,13 @@ export default class UserController extends AppService {
     if (!match) {
       throw new BadRequestError('Invalid username or password')
     }
-    const token = await this.Model.auth.authenticateUser(user)
+    const { session, token } = await this.Model.auth.authenticateUser(user)
     await this.DB.updateById('user', { id: user.id, last_login_date: new Date().toISOString() })
+    const redis = serviceLocator.get('redis')
+    await redis.setAsync(session.id, {
+      ...session,
+      user,
+    })
     res.setCookie('access_token', token, {
       httpOnly: true,
       secure: process.env.NODE_ENV === 'production',
@@ -146,6 +152,8 @@ export default class UserController extends AppService {
   @Post('/logout', { summary: 'Logout current session' })
   async logout({ session }: Request, res: Response) {
     const response = await this.DB.deleteById('auth_session', session.id)
+    const redis = serviceLocator.get('redis')
+    await redis.delAsync(session.id)
     res.clearCookie('access_token', { path: '/' })
     return response
   }

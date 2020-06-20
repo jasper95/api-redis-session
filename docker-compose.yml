@@ -1,0 +1,45 @@
+version: '3.7'
+networks:
+  app_net:
+
+services:
+  api-redis-session:
+    container_name: api-redis-session
+    networks:
+      - 'app_net'
+    build:
+      context: '.'
+      dockerfile: Dev.Dockerfile
+    volumes:
+      - './:/var/app'
+    ports:
+      - '5000:5000'
+    depends_on:
+      - 'postgres'
+      - 'redis'
+    environment:
+      - BASIC_PASSWORD=test
+      - BASIC_USERNAME=test
+      - DB_CLIENT=pg
+      - DB_HOST=postgres
+      - DB_NAME=test
+      - DB_PASSWORD=
+      - DB_PORT=5432
+      - DB_USER=postgres
+      - AUTH_SECRET=F0nch3rt0
+      - TOKEN_EXPIRY_DAYS=365
+      - REDIS_URL=redis://cache
+  redis:
+    image: redis:alpine
+    container_name: cache
+    networks:
+      - 'app_net'
+  postgres:
+    image: postgres:10.12-alpine
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_DB=test
+      - POSTGRES_PASSWORD=
+      - POSTGRES_HOST_AUTH_METHOD=trust
+    networks:
+      - 'app_net'

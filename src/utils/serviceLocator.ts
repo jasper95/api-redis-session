@@ -1,25 +1,21 @@
 import logger from './logger'
-import { ServiceLocator } from 'types'
-import sendgrid from '@sendgrid/mail'
+import { ServiceLocator, PromiseRedisClient } from 'types'
 import QueryWrapper from 'utils/dbwrapper'
 import { schema, database } from 'config'
-import S3Client from 'aws-sdk/clients/s3'
-import azure from 'azure-storage'
+import redis from 'redis'
 import { createProxy } from './tools'
 
+Promise.promisifyAll(redis)
 const DB = createProxy(new QueryWrapper(schema, database))
-sendgrid.setApiKey(process.env.SENDGRID_API_KEY)
+const redis_client = redis.createClient({
+  host: process.env.REDIS_URL,
+}) as PromiseRedisClient
 const serviceLocator: ServiceLocator = {
   services: {
     DB,
     knex: DB.knex,
     logger,
-    sendgrid,
-    s3: new S3Client({
-      accessKeyId: process.env.AWS_ACCESS_KEY,
-      secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
-    }),
-    azure: azure.createBlobService(process.env.AZURE_STORE_CONNECTION),
+    redis: redis_client,
   },
   registerService(service_name: string, service: object) {
     if (!this.services[service_name]) {
