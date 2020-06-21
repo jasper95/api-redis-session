@@ -115,7 +115,7 @@ export interface TableJsonSchema {
 }
 
 export interface Column {
-  type: 'string' | 'jsonb' | 'boolean' | 'uuid' | 'datetime' | 'integer' | 'decimal' | 'text' | 'timestamp'
+  type: 'string' | 'jsonb' | 'boolean' | 'uuid' | 'datetime' | 'integer' | 'decimal' | 'text' | 'timestamp' | 'bigInteger'
   column_name: string
   enum?: string[] | number[]
   required?: boolean

@@ -18,7 +18,7 @@ const COUNTRY_TABLE: Table = {
     },
     {
       column_name: 'population',
-      type: 'integer',
+      type: 'bigInteger',
       required: true,
     }
   ],

@@ -62,7 +62,7 @@ function getColumnType(column: Column): JSONSchema7 {
   if (type === 'uuid') {
     return { type: 'string', format: 'uuid' }
   }
-  if (type === 'decimal') {
+  if (type === 'decimal' || type === 'bigInteger') {
     return { type: 'number' }
   }
   if (type === 'text') {
