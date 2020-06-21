@@ -22,5 +22,5 @@ export default async function importCountries() {
     .fromFile(dir)
     .then(response => response.map(transform))
   await DB.insert('country', countries)
-  process.exit(0)
+  logger.info('Seed data successfully added - Country')
 }

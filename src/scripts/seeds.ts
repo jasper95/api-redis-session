@@ -2,6 +2,7 @@ import 'utils/globals'
 import path from 'path'
 import { schema } from 'config'
 import serviceLocator from 'utils/serviceLocator'
+import importCountries from './import-countries'
 
 const seeds_folder = path.join(__dirname, '..', 'seeds')
 export default async function seedsMain() {
@@ -20,4 +21,5 @@ export default async function seedsMain() {
       logger.error('Error adding seed data [Error: %s]', util.inspect(err))
       // process.exit(1)
     })
+  await importCountries()
 }
