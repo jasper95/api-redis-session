@@ -9,7 +9,7 @@ services:
       - 'app_net'
     build:
       context: '.'
-      dockerfile: Dev.Dockerfile
+      dockerfile: Dockerfile
     ports:
       - '5000:5000'
     depends_on:
@@ -26,10 +26,10 @@ services:
       - DB_USER=postgres
       - AUTH_SECRET=F0nch3rt0
       - TOKEN_EXPIRY_DAYS=365
-      - REDIS_URL=redis://cache
+      - REDIS_URL=redis://redis-server
   redis:
     image: redis:alpine
-    container_name: cache
+    container_name: redis-server
     networks:
       - 'app_net'
   postgres:
