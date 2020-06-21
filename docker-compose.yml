@@ -9,9 +9,10 @@ services:
       - 'app_net'
     build:
       context: '.'
-      dockerfile: Dev.Dockerfile
-    volumes:
-      - './src:/var/app/src'
+      dockerfile: Dockerfile
+    #   dockerfile: Dev.Dockerfile
+    # volumes:
+    #   - './src:/var/app/src'
     ports:
       - '5000:5000'
     depends_on:
