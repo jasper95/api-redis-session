@@ -282,10 +282,20 @@ class QueryWrapper {
     options: FilterOptions = {},
   ): Promise<{ data: T[]; count: number } | T[]> {
     const pagination: Pagination = options.pagination || {}
-    const sort: Sort[] = options.sort || [{ column: 'created_date', direction: 'asc' }]
+    let sorting = options.sort
+    if (typeof sorting === 'string') {
+      sorting = sorting.split(',')
+    }
+    const sort: Sort[] = sorting.map(e => {
+      const [column, direction = 'asc'] = e.split('.')
+      return {
+        column,
+        direction
+      } as Sort
+    })
     const fields: string[] = options.fields || []
     const search: Search = options.search || { fields: [], value: '' }
-    const { page, size } = pagination
+    let { page, size } = pagination
     let query = this.knex(table).where(filter)
     const { value: search_value = '', fields: search_fields = [] } = search || {}
     if (search_value && search_fields.length) {
@@ -297,7 +307,8 @@ class QueryWrapper {
           }, builder)
       })
     }
-    if (![page, size].includes(undefined)) {
+    if (size !== undefined) {
+      page = (page === undefined || Number.isNaN(page)) ? 0 : page
       const count = query
         .clone()
         .count()

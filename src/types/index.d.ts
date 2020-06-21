@@ -205,7 +205,7 @@ export interface RouteDefinition {
 
 export interface FilterOptions {
   fields?: string[]
-  sort?: Sort[]
+  sort?: string | string[]
   pagination?: Pagination
   search?: Search
 }

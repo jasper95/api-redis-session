@@ -20,7 +20,7 @@ export default class BaseController extends AppService {
     const {
       node,
       fields = [],
-      sort = [{ column: 'created_date', direction: 'desc' }],
+      sort = ['created_date.desc'],
       page,
       size,
       search,
@@ -61,7 +61,7 @@ export default class BaseController extends AppService {
     return this.DB.insert(node.replace(/-/g, '_'), data)
   }
 
-  @Put('/:id', { parameters: GET_NODE_DETAILS_PARAMS, response_schema: NODE_SCHEMA })
+  @Put('/:id', { parameters: GET_NODE_DETAILS_PARAMS, requestBody: CREATE_NODE_BODY, response_schema: NODE_SCHEMA })
   async updateNode({ params, user }: Request) {
     const { node, id } = params
     const table_name = node.replace(/-/g, '_')
