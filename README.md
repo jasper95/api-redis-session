@@ -32,7 +32,7 @@ Please Use the swagger API Docs for ease of testing
 
 URL
 ```
-  http://localhost:5000/v1/base/country?size=10&page=0&sort=population.desc,created_date.asc
+  GET http://localhost:5000/v1/base/country?size=10&page=0&sort=population.desc,created_date.asc
 ```
 
 #### Update By Id - PUT `/base/${node}/${id}`
@@ -50,7 +50,7 @@ URL
     }
   ```
 
-#### Delete By Id - `/base/${node}/${id}`
+#### Delete By Id - DEL `/base/${node}/${id}`
   URL
 ```
   DEL http://localhost:5000/v1/base/country/6b6f70ef-914e-4152-bbc1-d79845606b5d
