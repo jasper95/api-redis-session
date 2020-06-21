@@ -8,7 +8,7 @@ import { createProxy } from './tools'
 Promise.promisifyAll(redis)
 const DB = createProxy(new QueryWrapper(schema, database))
 const redis_client = redis.createClient({
-  host: process.env.REDIS_URL,
+  url: process.env.REDIS_URL,
 }) as PromiseRedisClient
 const serviceLocator: ServiceLocator = {
   services: {
