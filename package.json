@@ -53,7 +53,7 @@
     "path-to-regexp": "^3.0.0",
     "pg": "^7.12.1",
     "pm2": "^3.5.0",
-    "redis": "^3.0.2",
+    "redis": "^3.1.1",
     "reflect-metadata": "^0.1.13",
     "restify": "^8.3.0",
     "restify-cors-middleware": "^1.1.1",
